@@ -8,11 +8,12 @@ You can manage generated links:
 - set link expired time
 - delete 
 - view various statistics (link click count, unique ip list, last click date, created/expired time and date, url, hash)
-And also you can you UI and monitoring statistics:
+#### Also you can use UI and watch links statistic:
 
+![web_example](https://user-images.githubusercontent.com/68345551/152799924-3ec63558-404f-428b-8a21-834c8d038982.png)
 
 ## API description:
-All endpoints require basic authentication (HTTP Basic)
+All endpoints require basic authentication (HTTP Basic)\
 As a login and password, you must use: 
 - Login: admin
 - Password: admin
@@ -147,6 +148,7 @@ HTTP STATUS 200 on successful removal
 ```
 ### 6. Changing the link (editing the expiration date)
 **PUT** http://localhost:8080/api/link/{hash}
+
 Request body in JSON format
 #### Request example:
 ```bash
@@ -164,10 +166,7 @@ expire - sets the lifetime of the link in seconds, after which it is deleted. Wi
 HTTP STATUS 200 on successful data change.
 
 ## Project build:
-You need to go to the root of the project and run the command in the terminal:
-mvn package (or ./mvnw package if there is no Maven in the system)
-Then go to the target directory and run the resulting jar with the command
-"java -jar shortener-0.0.1-SNAPSHOT.jar"
+mvn package in root directory
 
 ## Additional Information:
-To monitor statistics, you can use the graphical interface available at: http://localhost:8080. It also allows you to add and remove links. (example is in the attachment)
+To monitor statistics, you can use the graphical interface available at: http://localhost:8080. It also allows you to add and remove links.
