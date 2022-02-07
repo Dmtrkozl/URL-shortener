@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td,
+        th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style>
+</head>
+
+<body>
+<h2>Url Shortener</h2>
+<table id="linkList"></table>
+<form action="#">
+    <input id="URL" placeholder="URL">
+    <button onclick="createLink()">Создать URL</button>
+</form>
+<script>
+    var html;
+
+    function createLink() {
+        var URL = document.getElementById("URL").value;
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.withCredentials = true;
+        xmlhttp.open("POST", "http://localhost:8080/api/link");
+        xmlhttp.setRequestHeader("Content-Type", "application/json");
+        xmlhttp.send(JSON.stringify({
+            url: URL
+        }));
+        xmlhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var links = JSON.parse(this.response);
+                console.log(links);
+            }
+            document.getElementById("linkList").innerHTML = html;
+        }
+        setTimeout(function () {
+            loadLink();
+        }, 500);
+    }
+
+    function deleteLink(hash) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.withCredentials = true;
+        xhttp.open("DELETE", "http://localhost:8080/api/link/" + hash, true);
+        xhttp.send();
+        setTimeout(function () {
+            loadLink();
+        }, 500);
+    }
+
+    function loadLink() {
+        html = '<tr>\n' +
+            '        <th>Hash</th>\n' +
+            '        <th>Link</th>\n' +
+            '        <th>Url</th>\n' +
+            '        <th>Click count</th>\n' +
+            '        <th>Created</th>\n' +
+            '        <th>Expired</th>\n' +
+            '        <th>Last click date</th>\n' +
+            '        <th>Unique click</th>\n' +
+            '        <th>Delete</th>\n' +
+            '    </tr>';
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.withCredentials = true;
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var links = JSON.parse(this.response);
+                for (var i = 0; i < links.length; i++) {
+                    var link = links[i];
+                    console.log(link);
+                    html = html + '<tr><td>' + link.hash + '</td>\n' +
+                        '        <td>http://localhost:8080/api/' + link.hash + '</td>\n' +
+                        '        <td>' + link.url + '</td>\n' +
+                        '        <td>' + link.statistic.clickCount + '</td>\n' +
+                        '        <td>' + link.statistic.createdDateTime + '</td>' +
+                        '        <td>' + link.statistic.expiredDateTime + '</td>' +
+                        '        <td>' + link.statistic.lastClickDateTime + '</td>' +
+                        '        <td>' + link.statistic.uniqueClickCount + '</td>' +
+                        '        <td><button onclick=deleteLink(\'' + link.hash + '\')>Delete</button></td></tr>'
+                }
+                document.getElementById("linkList").innerHTML = html;
+            }
+        };
+        xhttp.open("GET", "http://localhost:8080/api/link", true);
+        xhttp.send();
+    }
+
+    loadLink();
+</script>
+</body>
+</html>
